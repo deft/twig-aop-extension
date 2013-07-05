@@ -1,0 +1,23 @@
+{
+    "name": "deft/twig-aop",
+    "description": "Twig extension that provides AOP capabilities",
+    "autoload": {
+        "psr-0": {
+            "": "lib/"
+        }
+    },
+    "require": {
+        "twig/twig": "~1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jan Kramer",
+            "email": "jan@deft.nl"
+        }
+    ],
+    "minimum-stability": "dev"
+}
