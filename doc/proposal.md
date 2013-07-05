@@ -54,13 +54,13 @@ Hello!
   {% block foobar %}
     This is awesome!
   {% endblock %}
-{% endif
+{% endif %}
 ```
 
 For one block this is not so problematic, but if you would want to apply this
 rule to a lot of blocks in many templates, this one rule soon becomes many
-extra LOC in your templates. Even if you wrap the expression in 1 function, you
-would still have to add the if statements.
+extra duplicated LOC in your templates. Even if you wrap the expression in 1 
+function, you would still have to add the ```if``` and ```endif``` statements.
 
 Proposed usage
 --------------
