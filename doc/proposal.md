@@ -33,105 +33,66 @@ The processor that actually adds the advice to the compiled code at the
 associated join points. This means modifying the node tree just before it is
 compiled using node visitors.
 
-Aspect example:
----------------
+The problem
+-----------
 
-Basic API:
+Suppose you want to wrap all 'foobar' blocks in your application in an if
+statement. Then a template like this...
 
-```php
-interface Aspect
-{
-    /**
-     * @return Advice[]
-     */
-    public function getAdvice();
-}
-
-interface Advice
-{
-    /**
-     * Receives a Twig node and should return whether to associate with it or
-     * not. Essentially the pointcut of this advice.
-     *
-     * @param \Twig_Node $node
-     * @return bool
-     */
-    public function matches(\Twig_Node $node);
-
-    /**
-     * Performs (or delegates) the steps necessary to associate with the given
-     * node. The AspectWeaver will replace the passed node with the node that
-     * this method returns, which of course can be the same node.
-     *
-     * However, in most cases it will be necessary to wrap the passed node in
-     * a new node that handles adding the code before/after/around the original
-     * node.
-     *
-     * @param \Twig_Node $node
-     * @return \Twig_Node
-     */
-    public function associate(\Twig_Node $node);
-}
+```twig
+Hello!
+{% block foobar %}
+  This is awesome!
+{% endblock %}
 ```
 
-Usage example:
+would become...
 
-```php
-class LoggingAspect implements Aspect
-{
-    public function getAdvice()
-    {
-        return [
-            'block' => [new LogBlockNodeAdvice()],
-            'text' => [new LogTextNodeAdvice()]
-        ];
-    }
-}
-
-class LogBlockNodeAdvice implements Advice
-{
-    public function matches(\Twig_Node $node)
-    {
-        return
-            $node instanceof \Twig_Node_Block
-            && $node->getAttribute('name') == 'foobar'
-        ;
-    }
-
-    public function associate(\Twig_Node $node)
-    {
-        /** todo **/
-    }
-}
-
-/**
- * @todo
- */
-class LogTextNodeAdvice implements Advice
-{
-}
+```twig
+Hello!
+{% if true %}
+  {% block foobar %}
+    This is awesome!
+  {% endblock %}
+{% endif
 ```
 
-Weaving example:
-----------------
+For one block this is not so problematic, but if you would want to apply this
+rule to a lot of blocks in many templates, this one rule soon becomes many
+extra LOC in your templates. Even if you wrap the expression in 1 function, you
+would still have to add the if statements.
 
-Given the following template:
+Proposed usage
+--------------
 
-    Hello!
-    {% block foobar %}
-        This is awesome!
-    {% endblock %}
+The root of the problem described above is the fact that we're trying to add a
+certain aspect to our code that is in fact a cross-cutting concern: it applies
+to many pieces of the application.
 
-With the following aspect:
+However, the piece of code your adding is always the same, so intuitively you'd
+want to define this in one place. This is where AOP comes to the rescue.
 
-    LoggingAspect:
-        - Advice:
-            * Around "Nodes instanceof \Twig_Node_BlockReference with name 'foobar'":
-                - log "Entering block"
-                - original node
-                - log "Leaving block"
+The idea is to create separate templates that contain your cross-cutting
+concern, take for example the simple security check in this template:
 
-Then this will be the node structure *before* weaving:
+```twig
+{% if access_granted() %}
+  {% aspect thisJoinPoint %}
+{% endblock %}
+```
+
+This template is the 'advice': the actual code that has to be weaved. In
+this case, we wrapped new code around an existing join point.
+
+(todo: how to define aspects)
+
+Proposed implementation
+-----------------------
+
+The best way to achieve this is probably by modifying the node structure,
+using a NodeVisitor.
+
+Considering the example above, this would be the node structure *before* weaving:
 
     Module node:
         Body node:
@@ -144,11 +105,10 @@ And this should be the node structure *after* weaving:
 
     Module node:
         Text node: ...
-        Advice node:
-            LogNode
-            Block node:
+        If node:
+            Expression node
+            BlockReference node:
                 Text node: ...
-            LogNode
 
 References
 ----------
