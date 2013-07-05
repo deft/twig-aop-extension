@@ -126,32 +126,29 @@ With the following aspect:
 
     LoggingAspect:
         - Advice:
-            * Around "Nodes instanceof \Twig_Node_Block with name 'foobar'":
+            * Around "Nodes instanceof \Twig_Node_BlockReference with name 'foobar'":
                 - log "Entering block"
                 - original node
                 - log "Leaving block"
-            * Before 'Nodes instencof \Twig_Node_Text':
-                - log "Printing some text"
 
 Then this will be the node structure *before* weaving:
 
     Module node:
-        Text node: ...
-        Block node:
+        Body node:
             Text node: ...
+            BlockReference node:
+                Text node: ...
+        
 
 And this should be the node structure *after* weaving:
 
     Module node:
-        Before advice node:
-            -- log "Printing some text"
-            Text node: ...
-        Around advice node:
-            -- log "Entering block"
+        Text node: ...
+        Advice node:
+            LogNode
             Block node:
-                Before advice node:
                 Text node: ...
-            -- log: "Leaving block"
+            LogNode
 
 References
 ----------
