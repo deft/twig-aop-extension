@@ -104,11 +104,12 @@ Considering the example above, this would be the node structure *before* weaving
 And this should be the node structure *after* weaving:
 
     Module node:
-        Text node: ...
-        If node:
-            Expression node
-            BlockReference node:
-                Text node: ...
+        Body node:
+            Text node: ...
+            If node:
+                Expression node
+                BlockReference node:
+                    Text node: ...
 
 References
 ----------
