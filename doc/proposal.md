@@ -26,12 +26,13 @@ Code that is associated with a pointcut. Types of advice:
 
  * Before: The advice runs before the join point, no further interaction with join point.
  * After: The advice runs after the join point, no further interaction with join point.
- * Around: The advice runs *instead* of the join point. The advice does get a reference to the original join point.
+ * Around: The advice runs *instead* of the join point. The advice stil does have the 
+possibility to execute the original join point, but has to explicitly make this call.
 
 **Aspect weaver**
-The processor that actually adds the advice to the compiled code at the
-associated join points. This means modifying the node tree just before it is
-compiled using node visitors.
+The processor that actually adds the advice to the compiled result at the 
+associated join points. In Twig, this can be accomplished by modifying the 
+node tree just using node visitors, just before it is compiled.
 
 The problem
 -----------
@@ -50,7 +51,7 @@ would become...
 
 ```twig
 Hello!
-{% if true %}
+{% if expr %}
   {% block foobar %}
     This is awesome!
   {% endblock %}
@@ -77,12 +78,15 @@ concern, take for example the simple security check in this template:
 
 ```twig
 {% if access_granted() %}
-  {% aspect thisJoinPoint %}
+  {% proceed %}
 {% endblock %}
 ```
 
-This template is the 'advice': the actual code that has to be weaved. In
-this case, we wrapped new code around an existing join point.
+This template is the 'advice', i.e. the actual code that has to be weaved. It 
+checks whether access should be granted, and it only proceeds to the original
+join point when this is the case. This is an example of the 'around' advice
+type, which replaces matched join points. The other options are 'before' and
+'after', as mentioned in the Nomenclature section.
 
 (todo: how to define aspects)
 
