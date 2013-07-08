@@ -66,6 +66,7 @@ class Advice
      * Determines whether this advice should be added to the given Twig node.
      *
      * @param \Twig_Node $node
+     *
      * @return bool
      */
     public function matches(\Twig_Node $node)

@@ -4,6 +4,7 @@ namespace Deft\Twig\AopExtension\Tests;
 
 use Deft\Twig\AopExtension\Aop\Advice;
 use Deft\Twig\AopExtension\Aop\Aspect;
+use Deft\Twig\AopExtension\Aop\Matcher;
 use Deft\Twig\AopExtension\Aop\Pointcut\CallbackPointcut;
 use Deft\Twig\AopExtension\Aop\Weaver;
 use Deft\Twig\AopExtension\AopExtension;
@@ -50,9 +51,27 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('awesome!42', $output);
     }
 
+    public function testBeforeAndAfterAdvice()
+    {
+        $this->twig->addExtension($this->createExtension([
+            new TestAspect(Advice::POSITION_BEFORE),
+            new TestAspect(Advice::POSITION_AFTER)
+        ]));
+
+        $output = $this->twig->render($this->template);
+
+        $this->assertContains('42This', $output);
+        $this->assertContains('awesome!42', $output);
+
+    }
+
     private function createExtension(array $aspects)
     {
-        return new AopExtension(new AspectNodeVisitor($aspects, new Weaver()));
+        return new AopExtension(new AspectNodeVisitor(
+            $aspects,
+            new Weaver($this->twig),
+            new Matcher()
+        ));
     }
 }
 

@@ -2,8 +2,10 @@
 
 namespace Deft\Twig\AopExtension\NodeVisitor;
 
+use Deft\Twig\AopExtension\Aop\Matcher;
 use Deft\Twig\AopExtension\Aop\Weaver;
 use Deft\Twig\AopExtension\Aop\Advice;
+use Deft\Twig\AopExtension\Aop\Aspect;
 
 class AspectNodeVisitor implements \Twig_NodeVisitorInterface
 {
@@ -16,12 +18,20 @@ class AspectNodeVisitor implements \Twig_NodeVisitorInterface
     public function getAspects() { return $this->aspects; }
 
     /**
+     * Takes care of the actual weaving of advice into the twig node structure.
+     *
+     * @var Weaver
+     */
+    protected $weaver;
+
+    /**
      * @param array $aspects
      */
-    public function __construct(array $aspects, Weaver $weaver)
+    public function __construct(array $aspects, Weaver $weaver, Matcher $matcher)
     {
         $this->aspects = $aspects;
         $this->weaver = $weaver;
+        $this->matcher = $matcher;
     }
 
     /**
@@ -37,27 +47,11 @@ class AspectNodeVisitor implements \Twig_NodeVisitorInterface
      */
     public function leaveNode(\Twig_NodeInterface $node, \Twig_Environment $env)
     {
-        foreach ($this->aspects as $aspect) {
-            foreach ($aspect->getAdvice() as $advice) {
-                if ($advice->matches($node)) {
-                    $adviceNode = $env->parse($env->tokenize(
-                            $env->getLoader()->getSource($advice->getTemplateName())
-                        ))->getNode('body');
-
-                    switch ($advice->getPosition())
-                    {
-                        case Advice::POSITION_BEFORE: return $this->weaver->before($node, $adviceNode);
-                        case Advice::POSITION_AFTER: return $this->weaver->after($node, $adviceNode);
-                        case Advice::POSITION_AROUND: return $this->weaver->around($node, $adviceNode);
-                        default: throw new \UnexpectedValueException(
-                            sprintf("%s is not supported as position", $advice->getPosition())
-                        );
-                    }
-                }
-            }
-        }
-
-        return $node;
+        return array_reduce(
+            $this->matcher->findAdvice($node, $this->aspects),
+            [$this->weaver, 'weave'],
+            $node
+        );
     }
 
     /**
