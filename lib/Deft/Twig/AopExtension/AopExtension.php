@@ -3,6 +3,7 @@
 namespace Deft\Twig\AopExtension;
 
 use Deft\Twig\AopExtension\NodeVisitor\AspectNodeVisitor;
+use Deft\Twig\AopExtension\Proceed\TokenParser;
 
 class AopExtension extends \Twig_Extension
 {
@@ -22,6 +23,11 @@ class AopExtension extends \Twig_Extension
     public function getNodeVisitors()
     {
         return [$this->aspectWeaver];
+    }
+
+    public function getTokenParsers()
+    {
+        return [new TokenParser()];
     }
 
     /**

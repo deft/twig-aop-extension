@@ -7,6 +7,9 @@ use Deft\Twig\AopExtension\Aop\Aspect;
 use Deft\Twig\AopExtension\Aop\Matcher;
 use Deft\Twig\AopExtension\Aop\Pointcut\CallbackPointcut;
 use Deft\Twig\AopExtension\Aop\Weaver;
+use Deft\Twig\AopExtension\Aop\Weaving\AfterStrategy;
+use Deft\Twig\AopExtension\Aop\Weaving\BeforeStrategy;
+use Deft\Twig\AopExtension\Aop\Weaving\WeavingStrategy;
 use Deft\Twig\AopExtension\AopExtension;
 use Deft\Twig\AopExtension\NodeVisitor\AspectNodeVisitor;
 use Deft\Twig\AopExtension\AspectWeaver;
@@ -32,8 +35,8 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testBeforeAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new TestAspect(Advice::POSITION_BEFORE)]
-        ));
+            new SimpleAspect(new BeforeStrategy())
+        ]));
 
         $output = $this->twig->render($this->template);
 
@@ -43,26 +46,36 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testAfterAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new TestAspect(Advice::POSITION_AFTER)]
-        ));
+            new SimpleAspect(new AfterStrategy())
+        ]));
 
         $output = $this->twig->render($this->template);
 
         $this->assertContains('awesome!42', $output);
     }
 
-    public function testBeforeAndAfterAdvice()
+    public function testMultipleAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new TestAspect(Advice::POSITION_BEFORE),
-            new TestAspect(Advice::POSITION_AFTER)
+            new SimpleAspect(new BeforeStrategy()),
+            new SimpleAspect(new AfterStrategy())
         ]));
 
         $output = $this->twig->render($this->template);
 
         $this->assertContains('42This', $output);
         $this->assertContains('awesome!42', $output);
+    }
 
+    public function testNoMatchingAdvice()
+    {
+        $this->twig->addExtension($this->createExtension([
+            new SimpleAspect(new BeforeStrategy())
+        ]));
+
+        $output = $this->twig->render("Hello! This is awesome");
+
+        $this->assertNotContains('42', $output);
     }
 
     private function createExtension(array $aspects)
@@ -75,13 +88,13 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestAspect implements Aspect
+class SimpleAspect implements Aspect
 {
-    private $position;
+    private $weavingStrategy;
 
-    public function __construct($position)
+    public function __construct(WeavingStrategy $weavingStrategy)
     {
-        $this->position = $position;
+        $this->weavingStrategy = $weavingStrategy;
     }
 
     public function getAdvice()
@@ -91,7 +104,7 @@ class TestAspect implements Aspect
         });
 
         return [
-            new Advice('{{ 42 }}', $this->position, $pointcut)
+            new Advice('{{ 42 }}', $this->weavingStrategy, $pointcut)
         ];
     }
 }

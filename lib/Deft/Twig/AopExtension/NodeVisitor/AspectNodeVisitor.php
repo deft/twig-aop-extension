@@ -25,7 +25,9 @@ class AspectNodeVisitor implements \Twig_NodeVisitorInterface
     protected $weaver;
 
     /**
-     * @param array $aspects
+     * @param Aspect[] $aspects
+     * @param Weaver   $weaver
+     * @param Matcher  $matcher
      */
     public function __construct(array $aspects, Weaver $weaver, Matcher $matcher)
     {

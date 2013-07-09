@@ -2,30 +2,10 @@
 
 namespace Deft\Twig\AopExtension\Aop;
 
+use Deft\Twig\AopExtension\Aop\Weaving\WeavingStrategy;
+
 class Advice
 {
-    /**
-     * The advice will be run before the original code.
-     */
-    const POSITION_BEFORE = 'before';
-
-    /**
-     * The advice will run after the original code.
-     */
-    const POSITION_AFTER = 'after';
-
-    /**
-     * The advice will run instead of the original code. You do have access to
-     * the original node inside your advice, which can be run using the
-     * 'proceed'-tag. For example:
-     * <code>
-     * {% if security_check() %}
-     *   {% proceed %}
-     * {% endif %}
-     * </code>
-     */
-    const POSITION_AROUND = 'around';
-
     /**
      * The name of the template containing the advice body.
      *
@@ -35,13 +15,12 @@ class Advice
     public function getTemplateName() { return $this->templateName; }
 
     /**
-     * Returns the position relative to the original code where the advice code
-     * should be added. Must be one of the POSITION_ constants.
+     * Returns the strategy for weaving the advice, e.g. a BeforeStrategy or AfterStrategy
      *
-     * @var string
+     * @var WeavingStrategy
      */
-    private $position;
-    public function getPosition() { return $this->position; }
+    private $weavingStrategy;
+    public function getWeavingStrategy() { return $this->weavingStrategy; }
 
     /**
      * The point cut that determines to which join points this advice should be added.
@@ -55,10 +34,10 @@ class Advice
      * @param          $position
      * @param Pointcut $pointcut
      */
-    public function __construct($templateName, $position, Pointcut $pointcut)
+    public function __construct($templateName, WeavingStrategy $weavingStrategy, Pointcut $pointcut)
     {
         $this->templateName = $templateName;
-        $this->position = $position;
+        $this->weavingStrategy = $weavingStrategy;
         $this->pointcut = $pointcut;
     }
 
