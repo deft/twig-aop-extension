@@ -1,6 +1,6 @@
 <?php
 
-namespace Deft\Twig\AopExtension\Aop;
+namespace Deft\Twig\AopExtension;
 
 interface Aspect
 {

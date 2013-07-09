@@ -1,8 +1,8 @@
 <?php
 
-namespace Deft\Twig\AopExtension\Aop\Weaving;
+namespace Deft\Twig\AopExtension\Weaving;
 
-use Deft\Twig\Iterator\NodeIterator;
+use Deft\Twig\Iterator\RecursiveNodeIterator;
 
 /**
  * This strategy replaces the original node with the advice node. It's still
@@ -15,11 +15,11 @@ use Deft\Twig\Iterator\NodeIterator;
  * {% endif %}
  * </code>
  */
-class AroundStrategy implements WeavingStrategy
+class Around implements WeavingStrategy
 {
     public function weave(\Twig_Node $originalNode, \Twig_Node $adviceNode)
     {
-        $recursiveNodeIterator = new \RecursiveIteratorIterator(new NodeIterator($adviceNode), 1);
+        $recursiveNodeIterator = new \RecursiveIteratorIterator(new RecursiveNodeIterator($adviceNode), 1);
 
         foreach ($recursiveNodeIterator as $node)
         {

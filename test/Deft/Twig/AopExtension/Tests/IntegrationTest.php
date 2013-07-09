@@ -2,18 +2,19 @@
 
 namespace Deft\Twig\AopExtension\Tests;
 
-use Deft\Twig\AopExtension\Aop\Advice;
-use Deft\Twig\AopExtension\Aop\Aspect;
-use Deft\Twig\AopExtension\Aop\Matcher;
-use Deft\Twig\AopExtension\Aop\Pointcut\CallbackPointcut;
-use Deft\Twig\AopExtension\Aop\Weaver;
-use Deft\Twig\AopExtension\Aop\Weaving\AfterStrategy;
-use Deft\Twig\AopExtension\Aop\Weaving\AroundStrategy;
-use Deft\Twig\AopExtension\Aop\Weaving\BeforeStrategy;
-use Deft\Twig\AopExtension\Aop\Weaving\WeavingStrategy;
-use Deft\Twig\AopExtension\AopExtension;
-use Deft\Twig\AopExtension\NodeVisitor\AspectNodeVisitor;
+use Deft\Twig\AopExtension\Advice;
+use Deft\Twig\AopExtension\Aspect;
 use Deft\Twig\AopExtension\AspectWeaver;
+use Deft\Twig\AopExtension\AdviceMatching\DefaultAdviceMatcher;
+use Deft\Twig\AopExtension\NodeProvider\DirectNodeProvider;
+use Deft\Twig\AopExtension\NodeProvider\TemplateNodeProvider;
+use Deft\Twig\AopExtension\Pointcut\CallbackPointcut;
+use Deft\Twig\AopExtension\Pointcut\NodeTypePointcut;
+use Deft\Twig\AopExtension\Weaving\After;
+use Deft\Twig\AopExtension\Weaving\Around;
+use Deft\Twig\AopExtension\Weaving\Before;
+use Deft\Twig\AopExtension\Weaving\WeavingStrategy;
+use Deft\Twig\AopExtension\Extension\Aop;
 
 /**
  * @runTestsInSeparateProcesses
@@ -25,18 +26,22 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
      */
     private $twig;
 
-    private $template = "Hello! {% block foobar %}This is awesome!{% endblock %}";
+    /**
+     * @var string
+     */
+    private $template;
 
     public function setUp()
     {
         $loader = new \Twig_Loader_String();
         $this->twig = new \Twig_Environment($loader);
+        $this->template = "Hello! {% block foobar %}This is awesome!{% endblock %}";
     }
 
     public function testBeforeAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new SimpleAspect(new BeforeStrategy())
+            new SimpleAspect(new Before())
         ]));
 
         $output = $this->twig->render($this->template);
@@ -47,7 +52,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testAfterAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new SimpleAspect(new AfterStrategy())
+            new SimpleAspect(new After())
         ]));
 
         $output = $this->twig->render($this->template);
@@ -58,8 +63,8 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testMultipleAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new SimpleAspect(new BeforeStrategy()),
-            new SimpleAspect(new AfterStrategy())
+            new SimpleAspect(new Before()),
+            new SimpleAspect(new After())
         ]));
 
         $output = $this->twig->render($this->template);
@@ -71,7 +76,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testNoMatchingAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new SimpleAspect(new BeforeStrategy())
+            new SimpleAspect(new Before())
         ]));
 
         $output = $this->twig->render("Hello! This is awesome");
@@ -82,7 +87,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testAroundAdvice()
     {
         $this->twig->addExtension($this->createExtension([
-            new AroundAspect()
+            new AroundAspect($this->twig)
         ]));
 
         $output = $this->twig->render($this->template);
@@ -91,10 +96,9 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     private function createExtension(array $aspects)
     {
-        return new AopExtension(new AspectNodeVisitor(
+        return new Aop(new AspectWeaver(
             $aspects,
-            new Weaver($this->twig),
-            new Matcher()
+            new DefaultAdviceMatcher()
         ));
     }
 }
@@ -115,13 +119,27 @@ class SimpleAspect implements Aspect
         });
 
         return [
-            new Advice('{{ 42 }}', $this->weavingStrategy, $pointcut)
+            new Advice(
+                $pointcut,
+                new DirectNodeProvider(new \Twig_Node_Text('42', 1)),
+                $this->weavingStrategy
+            )
         ];
     }
 }
 
 class AroundAspect implements Aspect
 {
+    /**
+     * @var \Twig_Environment
+     */
+    private $twig;
+
+    public function __construct(\Twig_Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
     /**
      * Returns a list of advice associated with this aspect.
      *
@@ -130,13 +148,14 @@ class AroundAspect implements Aspect
     public function getAdvice()
     {
         $template = "{% if false %}{% proceed %}{% endif %}";
-
-        $pointcut = new CallbackPointcut(function (\Twig_Node $node) {
-            return $node instanceof \Twig_Node_BlockReference;
-        });
+        $pointcut = new NodeTypePointcut('Twig_Node_BlockReference');
 
         return [
-            new Advice($template, new AroundStrategy(), $pointcut)
+            new Advice(
+                $pointcut,
+                new TemplateNodeProvider($this->twig, $template),
+                new Around()
+            )
         ];
     }
 }

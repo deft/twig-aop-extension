@@ -3,8 +3,8 @@
 namespace Deft\Twig\AopExtension\Proceed;
 
 /**
- * Only a placeholder to be optionally replaced while weaving an advice using
- * the AroundStrategy.
+ * This node is a placeholder which may (or may not) be replaced while weaving
+ * an advice using the 'Around'-strategy.
  */
 class ProceedNode extends \Twig_Node
 {

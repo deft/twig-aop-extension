@@ -1,9 +1,10 @@
 <?php
 
-namespace Deft\Twig\AopExtension\Aop\Pointcut;
+namespace Deft\Twig\AopExtension\Pointcut;
 
-use Deft\Twig\AopExtension\Aop\Pointcut;
-
+/**
+ * Performs a callback that determines whether the given node should be matched.
+ */
 class CallbackPointcut implements Pointcut
 {
     /**

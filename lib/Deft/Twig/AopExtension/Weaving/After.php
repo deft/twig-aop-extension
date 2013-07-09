@@ -1,11 +1,11 @@
 <?php
 
-namespace Deft\Twig\AopExtension\Aop\Weaving;
+namespace Deft\Twig\AopExtension\Weaving;
 
 /**
  * This strategy will make the advice body run after the original code has run.
  */
-class AfterStrategy implements WeavingStrategy
+class After implements WeavingStrategy
 {
     public function weave(\Twig_Node $originalNode, \Twig_Node $adviceNode)
     {

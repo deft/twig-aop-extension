@@ -5,7 +5,7 @@ namespace Deft\Twig\Iterator;
 
 use RecursiveIterator;
 
-class NodeIterator implements \RecursiveIterator
+class RecursiveNodeIterator implements \RecursiveIterator
 {
     /**
      * @var \Twig_Node
@@ -37,18 +37,11 @@ class NodeIterator implements \RecursiveIterator
      */
     public function getChildren()
     {
-        $cur = $this->current();
-
-        return new self($cur);
+        return new self($this->current());
     }
 
-    public function current() {
-        return $this->iterator->current();
-    }
-    public function next() {
-        $next = $this->iterator->next();
-        return $next;
-    }
+    public function current() { return $this->iterator->current(); }
+    public function next() { return $this->iterator->next(); }
     public function key() { return $this->iterator->key(); }
     public function valid() { return $this->iterator->valid(); }
     public function rewind() { return $this->iterator->rewind(); }

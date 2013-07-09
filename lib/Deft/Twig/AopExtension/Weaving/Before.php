@@ -1,11 +1,11 @@
 <?php
 
-namespace Deft\Twig\AopExtension\Aop\Weaving;
+namespace Deft\Twig\AopExtension\Weaving;
 
 /**
  * This strategy will prepend the advice code to the original node code.
  */
-class BeforeStrategy implements WeavingStrategy
+class Before implements WeavingStrategy
 {
     public function weave(\Twig_Node $originalNode, \Twig_Node $adviceNode)
     {
