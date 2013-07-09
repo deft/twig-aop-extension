@@ -8,6 +8,7 @@ use Deft\Twig\AopExtension\Aop\Matcher;
 use Deft\Twig\AopExtension\Aop\Pointcut\CallbackPointcut;
 use Deft\Twig\AopExtension\Aop\Weaver;
 use Deft\Twig\AopExtension\Aop\Weaving\AfterStrategy;
+use Deft\Twig\AopExtension\Aop\Weaving\AroundStrategy;
 use Deft\Twig\AopExtension\Aop\Weaving\BeforeStrategy;
 use Deft\Twig\AopExtension\Aop\Weaving\WeavingStrategy;
 use Deft\Twig\AopExtension\AopExtension;
@@ -78,6 +79,16 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotContains('42', $output);
     }
 
+    public function testAroundAdvice()
+    {
+        $this->twig->addExtension($this->createExtension([
+            new AroundAspect()
+        ]));
+
+        $output = $this->twig->render($this->template);
+        $this->assertNotContains('This is awesome!', $output);
+    }
+
     private function createExtension(array $aspects)
     {
         return new AopExtension(new AspectNodeVisitor(
@@ -105,6 +116,27 @@ class SimpleAspect implements Aspect
 
         return [
             new Advice('{{ 42 }}', $this->weavingStrategy, $pointcut)
+        ];
+    }
+}
+
+class AroundAspect implements Aspect
+{
+    /**
+     * Returns a list of advice associated with this aspect.
+     *
+     * @return Advice[]
+     */
+    public function getAdvice()
+    {
+        $template = "{% if false %}{% proceed %}{% endif %}";
+
+        $pointcut = new CallbackPointcut(function (\Twig_Node $node) {
+            return $node instanceof \Twig_Node_BlockReference;
+        });
+
+        return [
+            new Advice($template, new AroundStrategy(), $pointcut)
         ];
     }
 }
