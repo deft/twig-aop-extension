@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "37eb711d861968fff5ff8638c66875bd",
+    "hash": "537b439589e5743daa9cb3ddb3d7118c",
     "packages": [
         {
             "name": "twig/twig",
@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "6f0753f0ff4047a870f57e7567446242b38b37ac"
+                "reference": "89007e5cc13011dbc063bd35aa6eb4d62754f727"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/6f0753f0ff4047a870f57e7567446242b38b37ac",
-                "reference": "6f0753f0ff4047a870f57e7567446242b38b37ac",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/89007e5cc13011dbc063bd35aa6eb4d62754f727",
+                "reference": "89007e5cc13011dbc063bd35aa6eb4d62754f727",
                 "shasum": ""
             },
             "require": {
@@ -52,7 +52,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2013-06-27 06:24:36"
+            "time": "2013-07-05 17:16:02"
         }
     ],
     "packages-dev": [
@@ -62,12 +62,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "38f4e1fbba67fc6e8afc3230043a0846f08bd226"
+                "reference": "de705e6a2f2a06eae138dd779e083b3340c8e30b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/38f4e1fbba67fc6e8afc3230043a0846f08bd226",
-                "reference": "38f4e1fbba67fc6e8afc3230043a0846f08bd226",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/de705e6a2f2a06eae138dd779e083b3340c8e30b",
+                "reference": "de705e6a2f2a06eae138dd779e083b3340c8e30b",
                 "shasum": ""
             },
             "require": {
@@ -116,7 +116,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2013-06-27 08:21:23"
+            "time": "2013-07-06 06:21:07"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -302,12 +302,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6a45d5297359d982f6929a7cae123abff6d3706d"
+                "reference": "d1efb5146a93d264d82b6304b7961451188b4a15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6a45d5297359d982f6929a7cae123abff6d3706d",
-                "reference": "6a45d5297359d982f6929a7cae123abff6d3706d",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d1efb5146a93d264d82b6304b7961451188b4a15",
+                "reference": "d1efb5146a93d264d82b6304b7961451188b4a15",
                 "shasum": ""
             },
             "require": {
@@ -371,7 +371,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2013-07-02 08:35:13"
+            "time": "2013-07-09 16:10:38"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -379,12 +379,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "4892a82eb01e7e8be9018d0bd29d1bafe3d3b1a7"
+                "reference": "b7475baabddfd7f8cbcbd7902d4ea1bed09b87f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/4892a82eb01e7e8be9018d0bd29d1bafe3d3b1a7",
-                "reference": "4892a82eb01e7e8be9018d0bd29d1bafe3d3b1a7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/b7475baabddfd7f8cbcbd7902d4ea1bed09b87f0",
+                "reference": "b7475baabddfd7f8cbcbd7902d4ea1bed09b87f0",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2013-06-23 04:38:26"
+            "time": "2013-07-09 16:12:40"
         },
         {
             "name": "sebastian/diff",
@@ -437,12 +437,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "222e1939856808fe4d02ec856a08721858d0217b"
+                "reference": "1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/222e1939856808fe4d02ec856a08721858d0217b",
-                "reference": "222e1939856808fe4d02ec856a08721858d0217b",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/1.0.0",
+                "reference": "1.0.0",
                 "shasum": ""
             },
             "require": {
@@ -479,7 +479,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2013-05-23 05:55:40"
+            "time": "2013-07-09 05:45:26"
         },
         {
             "name": "sebastian/exporter",
@@ -487,12 +487,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "ded61126bda06f9743cd4b3db1758d0554cbf1d9"
+                "reference": "1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/ded61126bda06f9743cd4b3db1758d0554cbf1d9",
-                "reference": "ded61126bda06f9743cd4b3db1758d0554cbf1d9",
+                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/1.0.0",
+                "reference": "1.0.0",
                 "shasum": ""
             },
             "require": {
@@ -542,7 +542,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2013-02-18 17:48:31"
+            "time": "2013-07-09 05:47:49"
         },
         {
             "name": "sebastian/version",
